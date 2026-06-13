@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/loft-sh/vcluster/pkg/authorization/anonymousmetricsauthorizer"
 	"github.com/loft-sh/vcluster/pkg/authentication/delegatingauthenticator"
 	"github.com/loft-sh/vcluster/pkg/authentication/platformauthenticator"
 	"github.com/loft-sh/vcluster/pkg/authorization/allowall"
@@ -265,6 +266,7 @@ func (s *Server) ServeOnListenerTLS(ctx *synccontext.ControllerContext) error {
 	)
 	serverConfig.Authorization.Authorizer = union.New(
 		kubeletauthorizer.New(s.uncachedVirtualClient),
+		anonymousmetricsauthorizer.New(),
 		delegatingauthorizer.New(s.uncachedVirtualClient, redirectAuthResources, redirectAuthNonResources),
 		impersonationauthorizer.New(s.uncachedVirtualClient),
 		allowall.New(),
